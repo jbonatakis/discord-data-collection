@@ -180,7 +180,7 @@ class Plumber(discord.Client):
             '{message.channel.id}',
             '{message.author.id}',
             '{message.content.replace("'", "''") if isinstance(message.content, str) else message.content}',
-            '{message.content.replace("'", "''") if isinstance(message.clean_content, str) else message.clean_content}',
+            '{message.clean_content.replace("'", "''") if isinstance(message.clean_content, str) else message.clean_content}',
             '{message.jump_url}',
             '{message.created_at}');
             """
