@@ -74,6 +74,38 @@ if __name__ == "__main__":
         fig = hourly_plot.get_figure()
         fig.savefig("images/messages-by-hour.png")
 
+    def plot_joined_by_month(con):
+        plt.clf()
+        joined_by_month_sql = """
+        select
+            strftime(datetrunc('month', joined_at), '%Y-%m') as month,
+            datepart('year', joined_at) as year,
+            count(*) as joined_count 
+        from users 
+        group by 1, 2
+        order by 1;
+        """
+
+        joined_by_month = run_query(con, joined_by_month_sql)
+        plt.figure(figsize=(15, 8))
+        plot = barplot(
+            joined_by_month,
+            x="month",
+            y="joined_count",
+            hue="year",
+            width=0.8,
+            dodge=False,
+        )
+        avg_joined = run_query(
+            con,
+            "select count(*)/count(distinct datetrunc('month', joined_at)) as avg from users;",
+        )
+        plot.axhline(avg_joined["avg"][0])
+        plot.tick_params(axis="x", rotation=90)
+        fig = plot.get_figure()
+        fig.savefig("images/joined-by-month.png")
+
 
 plot_monthly_activity(con)
 plot_hourly_activity(con)
+plot_joined_by_month(con)
